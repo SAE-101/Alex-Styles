@@ -125,6 +125,16 @@
       </section>
     </main>
 
+    <dialog class="contact-dialog" id="welcome-dialog" aria-labelledby="welcome-dialog-title" aria-describedby="welcome-dialog-description">
+      <div class="dialog-panel">
+        <button class="dialog-close" type="button" aria-label="Close welcome dialog" data-close-welcome-dialog autofocus>×</button>
+        <p class="eyebrow"><span class="eyebrow-line"></span> Welcome</p>
+        <h2 id="welcome-dialog-title">Thanks for stopping by.</h2>
+        <p id="welcome-dialog-description">Take a look around and explore a few of my favorite projects.</p>
+        <a class="button button-dark" href="#work" data-welcome-work>Explore my work <span aria-hidden="true">↘</span></a>
+      </div>
+    </dialog>
+
     <dialog class="project-dialog" id="project-dialog" aria-labelledby="project-dialog-title">
       <div class="project-dialog-panel">
         <button class="dialog-close" type="button" aria-label="Close project details" data-close-project-dialog>×</button>
@@ -294,6 +304,37 @@
 
       contactDialog.addEventListener("click", event => {
         if (event.target === contactDialog) contactDialog.close();
+      });
+
+      const welcomeDialog = document.querySelector("#welcome-dialog");
+      let welcomeReady = false;
+      let welcomeShown = false;
+
+      function showWelcomeWhenAvailable() {
+        if (!welcomeReady || welcomeShown || document.hidden || document.querySelector("dialog[open]")) return;
+        setWorkDropdownOpen(false);
+        welcomeDialog.showModal();
+        welcomeShown = true;
+      }
+
+      window.setTimeout(() => {
+        welcomeReady = true;
+        showWelcomeWhenAvailable();
+      }, 15000);
+
+      document.querySelectorAll("dialog:not(#welcome-dialog)").forEach(dialog => {
+        dialog.addEventListener("close", showWelcomeWhenAvailable);
+      });
+      document.addEventListener("visibilitychange", showWelcomeWhenAvailable);
+
+      welcomeDialog.querySelector("[data-close-welcome-dialog]").addEventListener("click", () => {
+        welcomeDialog.close();
+      });
+      welcomeDialog.querySelector("[data-welcome-work]").addEventListener("click", () => {
+        welcomeDialog.close();
+      });
+      welcomeDialog.addEventListener("click", event => {
+        if (event.target === welcomeDialog) welcomeDialog.close();
       });
 
       const contactForm = document.querySelector("#contact-form");
